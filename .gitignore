@@ -1,0 +1,17 @@
+# SBT
+/target/
+project/*
+!project/build.properties
+.bsp/
+
+# IDEA
+.idea
+
+#OSX
+.DS_Store
+
+# Git
+.git/
+
+# Compiled / Testing
+*.jar
