@@ -7,4 +7,4 @@ import rip.hippo.stacky.values.VirtualValue
  * @version 1.0.0, 12/1/21
  * @since 1.0.0
  */
-final case class VirtualFloat(value: Float) extends VirtualValue with VirtualPrimitive[Float]
+final case class VirtualFloat(var value: Float) extends VirtualValue with VirtualPrimitive[Float]

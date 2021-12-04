@@ -14,18 +14,19 @@ import scala.collection.mutable
  * @since 1.0.0
  */
 final case class VirtualClass(name: String, superClass: Option[VirtualClass], interfaces: ListBuffer[VirtualClass], virtualClassLoader: Option[VirtualClassLoader]) extends VirtualValue {
+  
   val fields: ListBuffer[FieldProxy] = ListBuffer()
   val methods: ListBuffer[MethodProxy] = ListBuffer()
 
   superClass match {
     case Some(value) =>
-      fields ++= value.fields
+      fields ++= value.fields.map(_.virtualCopy)
       methods ++= value.methods.filterNot(_.isInit)
     case None =>
   }
   
   interfaces.foreach(interface => {
-    fields ++= interface.fields
+    fields ++= interface.fields.map(_.virtualCopy)
     methods ++= interface.methods.filterNot(_.isInit) // Shouldn't exist in interfaces, but when has an extra filter ever hurt anyone
   })
 

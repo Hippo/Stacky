@@ -2,6 +2,7 @@ package rip.hippo.stacky
 
 import rip.hippo.stacky.builder.VirtualMemoryBuilder
 import rip.hippo.stacky.values.VirtualValue
+import rip.hippo.stacky.values.types.VirtualTop
 
 import scala.collection.mutable
 
@@ -23,15 +24,31 @@ final class VirtualMemory {
 
   def pop(): VirtualValue =
     stack.pop()
-    
+
+  def popAs[T <: VirtualValue]: T =
+    stack.pop().asInstanceOf[T]
+
+  def popWide(): VirtualValue = {
+    val pop1 = pop()
+    val pop2 = pop()
+    pop1 match {
+      case VirtualTop() => pop2
+      case _ => pop1
+    }
+  }
+
   def clearStack(): Unit =
     stack.clear()
-    
+
   def store(index: Int, virtualValue: VirtualValue): Unit =
     locals += (index -> virtualValue)
 
   def load(index: Int): VirtualValue =
     locals(index)
+
+
+  def loadAs[T <: VirtualValue](index: Int): T =
+    locals(index).asInstanceOf[T]
 
   def copy(): VirtualMemory = {
     val memory = new VirtualMemory

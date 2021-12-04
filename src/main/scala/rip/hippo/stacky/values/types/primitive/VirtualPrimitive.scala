@@ -6,4 +6,4 @@ package rip.hippo.stacky.values.types.primitive
  * @since 1.0.0
  */
 trait VirtualPrimitive[T]:
-  val value: T
+  var value: T

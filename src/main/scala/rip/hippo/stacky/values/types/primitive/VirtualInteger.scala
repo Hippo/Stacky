@@ -7,7 +7,8 @@ import rip.hippo.stacky.values.VirtualValue
  * @version 1.0.0, 12/1/21
  * @since 1.0.0
  */
-final case class VirtualInteger(value: Int) extends VirtualValue with VirtualPrimitive[Int] {
+final case class VirtualInteger(var value: Int) extends VirtualValue with VirtualPrimitive[Int] {
+
   def boolean: Boolean = value == 1
   def byte: Byte = value.toByte
   def short: Short = value.toShort

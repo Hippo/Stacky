@@ -39,8 +39,7 @@ final class VirtualMemoryTest extends AnyFunSuite {
 
     val obj = new Object
 
-
-
+    
     println(memoryWithBuilder)
   }
 

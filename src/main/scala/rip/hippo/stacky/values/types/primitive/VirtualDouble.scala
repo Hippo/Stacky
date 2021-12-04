@@ -7,4 +7,4 @@ import rip.hippo.stacky.values.VirtualValue
  * @version 1.0.0, 12/1/21
  * @since 1.0.0
  */
-final case class VirtualDouble(value: Double) extends VirtualValue with VirtualPrimitive[Double]
+final case class VirtualDouble(var value: Double) extends VirtualValue with VirtualPrimitive[Double]

@@ -7,7 +7,7 @@ lazy val root = project
     scalaVersion := "3.1.0",
 
     resolvers += "jitpack" at "https://jitpack.io",
-    libraryDependencies += "com.github.Hippo" % "HippoCafe" % "2.1.4",
+    libraryDependencies += "com.github.Hippo" % "HippoCafe" % "2.1.5",
 
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test
   )

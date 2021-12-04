@@ -51,13 +51,15 @@ final class VirtualClassLoader(virtualMachine: VirtualMachine) {
     loadedClasses.get(className) match {
       case Some(value) => value
       case None =>
-        classFileMap.get(className) match {
+        if (className.charAt(0) == '[')
+          loadArrayClass(className) 
+        else classFileMap.get(className) match {
           case Some(value) =>
             val superClass = if (value.superName != null) Option(loadClass(value.superName)) else Option.empty
             val interfaces = ListBuffer[VirtualClass]()
             value.interfaces.foreach(interface => interfaces += loadClass(interface))
             val virtualClass = VirtualClass(className, superClass, interfaces, Option(this))
-            virtualClass.fields ++= value.fields.map(info => FieldProxy(virtualClass, info))
+            virtualClass.fields ++= value.fields.map(info => FieldProxy(virtualClass, info, VirtualMachine.getDefaultValue(info.descriptor)))
             virtualClass.methods ++= value.methods.map(info => MethodProxy(virtualClass, info))
 
             virtualClass.lookupMethod("<clinit>", "()V") match {
@@ -70,5 +72,14 @@ final class VirtualClassLoader(virtualMachine: VirtualMachine) {
             virtualClass
           case None => throw new ClassNotFoundException(className)
         }
+    }
+
+  private def loadArrayClass(descriptor: String): VirtualClass =
+    loadedClasses.get(descriptor) match {
+      case Some(value) => value
+      case None =>
+        val arrayClass = VirtualClass(descriptor, Option(loadClass("java/lang/Object")), ListBuffer(), Option.empty)
+        loadedClasses += (descriptor -> arrayClass)
+        arrayClass
     }
 }
