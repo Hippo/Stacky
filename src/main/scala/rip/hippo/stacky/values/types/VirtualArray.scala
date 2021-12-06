@@ -7,4 +7,7 @@ import rip.hippo.stacky.values.VirtualValue
  * @version 1.0.0, 12/2/21
  * @since 1.0.0
  */
-final case class VirtualArray(elementType: VirtualClass, value: Array[VirtualValue]) extends VirtualValue
+final case class VirtualArray(elementType: VirtualClass, value: Array[VirtualValue]) extends VirtualObject(null) {
+  override def virtualClone: VirtualObject =
+    VirtualArray(elementType, value)
+}

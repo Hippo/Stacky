@@ -52,22 +52,33 @@ final class VirtualClassLoader(virtualMachine: VirtualMachine) {
       case Some(value) => value
       case None =>
         if (className.charAt(0) == '[')
-          loadArrayClass(className) 
+          loadArrayClass(className)
         else classFileMap.get(className) match {
           case Some(value) =>
             val superClass = if (value.superName != null) Option(loadClass(value.superName)) else Option.empty
             val interfaces = ListBuffer[VirtualClass]()
             value.interfaces.foreach(interface => interfaces += loadClass(interface))
             val virtualClass = VirtualClass(className, superClass, interfaces, Option(this))
+
+            value.fields.foreach(fieldInfo => virtualClass.fields.filter(proxy => proxy.fieldInfo.name.equals(fieldInfo.name) && proxy.fieldInfo.descriptor.equals(fieldInfo.descriptor)).foreach(virtualClass.fields.-=))
+            value.methods.foreach(methodInfo => virtualClass.methods.filter(proxy => proxy.methodInfo.name.equals(methodInfo.name) && proxy.methodInfo.descriptor.equals(methodInfo.descriptor)).foreach(virtualClass.methods.-=))
+
             virtualClass.fields ++= value.fields.map(info => FieldProxy(virtualClass, info, VirtualMachine.getDefaultValue(info.descriptor)))
             virtualClass.methods ++= value.methods.map(info => MethodProxy(virtualClass, info))
+            loadedClasses += (value.name -> virtualClass)
 
             virtualClass.lookupMethod("<clinit>", "()V") match {
               case Some(value) =>
-                val executionContext = new ExecutionContext(new VirtualMemory, value.methodInfo)
-                virtualMachine.execute(executionContext)
+                virtualMachine.getHook(virtualClass.name, "<clinit>", "()V") match {
+                  case Some(value) =>
+                    value.hook(virtualMachine, new VirtualMemory)
+                  case None =>
+                    val executionContext = new ExecutionContext(new VirtualMemory, value.methodInfo)
+                    virtualMachine.execute(executionContext)
+                }
               case None =>
             }
+
 
             virtualClass
           case None => throw new ClassNotFoundException(className)

@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
  * @version 1.0.0, 12/2/21
  * @since 1.0.0
  */
-case class ClassHook(className: String) {
+class ClassHook(val className: String) {
   val hooks: ListBuffer[RegisteredClassHook] = ListBuffer()
   
   def addHook(name: String, descriptor: String, hook: Hook): Unit =

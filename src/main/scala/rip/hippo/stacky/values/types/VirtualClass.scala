@@ -5,6 +5,7 @@ import rip.hippo.hippocafe.util.Type
 import rip.hippo.stacky.values.VirtualValue
 import rip.hippo.stacky.loader.VirtualClassLoader
 
+import java.util.concurrent.locks.{Condition, Lock, ReentrantLock}
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable
 
@@ -13,10 +14,10 @@ import scala.collection.mutable
  * @version 1.0.0, 12/1/21
  * @since 1.0.0
  */
-final case class VirtualClass(name: String, superClass: Option[VirtualClass], interfaces: ListBuffer[VirtualClass], virtualClassLoader: Option[VirtualClassLoader]) extends VirtualValue {
-  
-  val fields: ListBuffer[FieldProxy] = ListBuffer()
-  val methods: ListBuffer[MethodProxy] = ListBuffer()
+final case class VirtualClass(name: String, superClass: Option[VirtualClass], interfaces: ListBuffer[VirtualClass], virtualClassLoader: Option[VirtualClassLoader]) extends VirtualValue with VirtualReference {
+
+  override val fields: ListBuffer[FieldProxy] = ListBuffer()
+  override val methods: ListBuffer[MethodProxy] = ListBuffer()
 
   superClass match {
     case Some(value) =>
@@ -57,10 +58,10 @@ final case class VirtualClass(name: String, superClass: Option[VirtualClass], in
     getAllInterfaces(virtualClass).contains(name)
   }
 
-  def lookupField(name: String, descriptor: String): Option[FieldProxy] =
+  override def lookupField(name: String, descriptor: String): Option[FieldProxy] =
     fields.find(proxy => proxy.fieldInfo.name.equals(name) && proxy.fieldInfo.descriptor.equals(descriptor))
 
-  def lookupMethod(name: String, descriptor: String): Option[MethodProxy] =
+  override def lookupMethod(name: String, descriptor: String): Option[MethodProxy] =
     methods.find(proxy => proxy.methodInfo.name.equals(name) && proxy.methodInfo.descriptor.equals(descriptor))
 }
 

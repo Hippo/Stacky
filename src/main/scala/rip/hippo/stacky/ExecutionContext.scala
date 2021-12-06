@@ -12,10 +12,10 @@ import scala.collection.mutable.ListBuffer
  * @version 1.0.0, 12/2/21
  * @since 1.0.0
  */
-final case class ExecutionContext(virtualMemory: VirtualMemory, instructions: ListBuffer[Instruction], tryCatchBlocks: ListBuffer[TryCatchBlock]) {
-  
+final case class ExecutionContext(virtualMemory: VirtualMemory, instructions: List[Instruction], tryCatchBlocks: ListBuffer[TryCatchBlock]) {
+
   def this(virtualMemory: VirtualMemory, methodInfo: MethodInfo) =
-    this(virtualMemory, methodInfo.instructions, methodInfo.tryCatchBlocks)
+    this(virtualMemory, methodInfo.instructions.toList, methodInfo.tryCatchBlocks)
 
   val memoryWatches: mutable.Map[Instruction, ListBuffer[VirtualMemory]] = mutable.Map()
   private val watchInstructions = mutable.Set[Instruction]()
